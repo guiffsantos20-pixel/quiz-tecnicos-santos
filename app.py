@@ -100,21 +100,31 @@ if 'jogo_terminado' not in st.session_state:
 if 'input_palpite' not in st.session_state:
     st.session_state.input_palpite = ""
 
-
 def processar_palpite():
     palpite = st.session_state.input_palpite
     palpite_norm = normalizar_texto(palpite)
+    
+    if not palpite_norm:
+        return
+
     for tecnico in tecnicos:
         nome_tecnico = tecnico["nome"]
-        if palpite_norm in normalizar_texto(nome_tecnico) and nome_tecnico not in st.session_state.acertos:
-            st.session_state.acertos.append(nome_tecnico)
-            st.toast(f'Acertou: {nome_tecnico}!', icon='✅')
-            
-            if len(st.session_state.acertos) == len(tecnicos):
-                 st.session_state.jogo_terminado = True
-                 st.session_state.venceu = True
-            break
+        nome_norm = normalizar_texto(nome_tecnico)
+        
+       
+        palavras_nome = nome_norm.split()
+        
     
+        if (palpite_norm == nome_norm) or (palpite_norm in palavras_nome):
+            if nome_tecnico not in st.session_state.acertos:
+                st.session_state.acertos.append(nome_tecnico)
+                st.toast(f'Acertou: {nome_tecnico}!', icon='✅')
+                
+                if len(st.session_state.acertos) == len(tecnicos):
+                     st.session_state.jogo_terminado = True
+                     st.session_state.venceu = True
+                break
+                
     st.session_state.input_palpite = ""
 
 TEMPO_LIMITE_SEGUNDOS = 900 
@@ -132,7 +142,6 @@ if st.session_state.jogo_iniciado and not st.session_state.jogo_terminado:
     
     timer_placeholder = st.empty()
     
-    # Caixa de texto utilizando a função on_change
     st.text_input("Nome do técnico:", key="input_palpite", on_change=processar_palpite)
 
     col_stats1, col_stats2 = st.columns(2)
