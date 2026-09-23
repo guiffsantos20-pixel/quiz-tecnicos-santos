@@ -1,3 +1,1 @@
 streamlit
-streamlit-autorefresh
-streamlit-timer
